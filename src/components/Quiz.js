@@ -1,35 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import {useSelector } from 'react-redux';
 
-function Quiz() {
-  const [questions, setQuestions] = useState([]);
+const Quiz =() => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
+  const quizList = useSelector((state) => state.app.quiz);
+  const loadingState = useSelector((state) => state.app.loadingState);
 
-  useEffect(() => {
-    // Fetch quiz data from the API and set it in the state
-    async function fetchQuizData() {
-      try {
-        const response = await axios.get('https://opentdb.com/api.php?amount=10');
-        const quizQuestions = response.data.results;
-        // Shuffle the correct answer into the options randomly
-        const shuffledQuestions = quizQuestions.map((question) => {
-          const options = [...question.incorrect_answers];
-          const randomIndex = Math.floor(Math.random() * 4);
-          options.splice(randomIndex, 0, question.correct_answer);
-          return {
-            ...question,
-            options,
-          };
-        });
-        setQuestions(shuffledQuestions);
-      } catch (error) {
-        console.error('Error fetching quiz data:', error);
-      }
-    }
-
-    fetchQuizData();
-  }, []);
 
   const handleOptionSelect = (option) => {
     // Allow selecting an option only if no option is already selected
@@ -38,7 +15,6 @@ function Quiz() {
     }
   };
 
-  console.log(selectedOption);
   const handleNextQuestion = () => {
     // Check if an option is selected before moving to the next question
     if (selectedOption !== null) {
@@ -59,15 +35,15 @@ function Quiz() {
 
   return (
     <div>
-      {questions.length > 0 ? (
+      {loadingState === 'LOADED'  ? (
         <div className='relative'>
           <h1 className="text-2xl font-semibold mb-4 text-white bg-gray-700 p-5">Quiz App</h1>
           <div className="bg-white rounded-lg shadow-md p-7 h-96">
             <div className="mb-4">
               <p className="text-lg font-medium mb-2">
-                {questions[currentQuestion].question}
+                {quizList[currentQuestion].question}
               </p>
-              {questions[currentQuestion].options.map((option, index) => (
+              {quizList[currentQuestion].options.map((option, index) => (
                 <label
                   key={index}
                   className="block my-2"
@@ -94,9 +70,9 @@ function Quiz() {
                 Previous
               </button>
               <button
-                className={`bg-green-700 text-white font-semibold border py-2 px-5 rounded-lg ${selectedOption === null || currentQuestion === questions.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`bg-green-700 text-white font-semibold border py-2 px-5 rounded-lg ${selectedOption === null || currentQuestion === quizList.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={handleNextQuestion}
-                disabled={selectedOption === null || currentQuestion === questions.length - 1}
+                disabled={selectedOption === null || currentQuestion === quizList.length - 1}
               >
                 Next
               </button>
