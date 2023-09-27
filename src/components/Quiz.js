@@ -104,7 +104,7 @@ const Quiz = ({ setShowScoreCard }) => {
                     : ""
                 }`}
                 onClick={handleNextQuestion}
-                disabled={currentQuestion === quizList.length - 1}
+                disabled={selectedOptions[currentQuestion] === undefined || currentQuestion === quizList.length - 1}
               >
                 Next
               </button>
