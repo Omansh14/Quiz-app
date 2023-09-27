@@ -26,6 +26,12 @@ const appReducer = (currentState, action) => {
             error: action.payload,
         }
 
+        case 'ADD_SCORE':
+            return{
+                ...state,
+                score: action.payload,
+            }
+
         default: return state;
     }
 } 

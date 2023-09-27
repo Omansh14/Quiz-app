@@ -7,7 +7,6 @@ export const marks = (data) => {
   };
 };
 
-
 export const fetchQuizData = () => {
   return (dispatch) => {
     dispatch({ type: "REQUEST_QUIZ_DATA" });
@@ -17,8 +16,11 @@ export const fetchQuizData = () => {
       .then((res) => {
         const data = res.data.results;
         const mappedData = data.map((item) => ({
-          ...{...item, options: [item.correct_answer, ...item.incorrect_answers]},
-          answered: false,
+          ...{
+            ...item,
+            options: [item.correct_answer, ...item.incorrect_answers],
+          },
+          answer: "",
         }));
         dispatch({ type: "RECEIVE_QUIZ_DATA", payload: mappedData });
       })
